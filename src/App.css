@@ -1,0 +1,118 @@
+.container{
+    margin-bottom: 2vw;
+    margin-top: 2vw;
+}
+
+.flexBoxLmao{
+    display: flex;
+    justify-content: left;
+    height:7vh;
+    padding-top: 1vh;
+    padding-bottom: 1vh;
+    
+}
+
+.winningTeam{
+    width : 100%;
+    background-color: lightblue;
+}
+
+.losingTeam{
+    width : 100%;
+    background-color: lightcoral;
+}
+
+.accordionHead{
+    width: 30vw;
+    height:5vw;
+    background-color: lightgreen;
+}
+
+.championImage{
+    height: 100%;
+}
+
+.summonerSpellContainer{
+    width:20%;
+    margin-left: 0.5vw;
+}
+
+.summonerSpellImage{
+    width:100%;
+}
+
+.gameInfoTextBox{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.emptyItemSlot{
+    width : 12%;
+    height: 70%;
+    background-color:gray;
+    margin-left: 0.1vw;
+    margin-right: 0.1vw;
+}
+
+.normalItem{
+    height:70%;
+    margin-left: 0.1vw;
+    margin-right: 0.1vw;
+}
+
+.topOfInfo{
+    width:100%;
+    height:5vh;
+    background-color: rgb(212, 212, 212);
+    margin-top: 0px;
+    display: flex;
+    align-items: center;
+}
+
+.blueTextWinner{
+    color: rgb(0, 122, 163);
+    font-weight: 700 !important;
+    margin-right: 5%;
+    margin-left: 5%;
+}
+
+.redTextLoser{
+    color: rgb(189, 0, 0);
+    font-weight: 700 !important;
+    margin-right: 5%;
+    margin-left: 5%;
+}
+
+.summonerInfoImage{
+    width:10vw !important;
+}
+
+.summonerInfoContainer{
+    width:100%;
+    height:50vh;
+    display: flex;
+    align-items:flex-start;
+}
+
+.summonerInfoText{
+    width:20%;
+    height:100%;
+}
+
+.summonerInfoText > h1{
+    font-size:3vw !important;
+}
+
+.rankedEmblems{
+    height : 30vh;
+}
+
+.rankedInfo{
+    text-align: center;
+}
+
+.rankedInfo > h1{
+    font-size:3vw !important; 
+}
+
