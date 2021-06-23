@@ -20,7 +20,6 @@ export class SearchBar extends React.Component {
             window.location.assign("/user/" + this.state.username);
         })
         .catch(err => {
-          console.log("suck my fat cock");
           window.location.assign("/notFound");
         })
     }
@@ -34,13 +33,30 @@ export class SearchBar extends React.Component {
     render(){
         return(
             <div class = "searchBarEverything">
-                <form onSubmit={this.submit}>
-                    <label>
-                        <input type="text" onChange={this.onChangeUser} placeholder="Username" className = "searchBar" />
-                    </label>
 
-                    <input type="submit" />
-                </form>
+                <div className = "titleCardDiv">
+                    <h1>OP.GG2</h1>
+                </div>
+
+                <div className = "searchBarContainer">
+                    <form onSubmit={this.submit}>
+                        <label>
+                            <input type="text" onChange={this.onChangeUser} placeholder="Username" className = "searchBar" />
+                        </label>
+                    </form>
+                    <button onClick = {this.submit} className = "submitButton"><h1>Search</h1></button>
+                </div>
+                
+                <div className = "bottomInfoDiv"> 
+                    <h2>Choose a summoner to search up, and get full data on them</h2>
+                    
+                    <div className = "bottomInfoBottomInfo">
+                        <div><h2>Inspect a Players Ranked Info</h2></div>
+                        <div><h2>Track Someone's Match History</h2></div>
+                        <div><h2>Find a Persons Champion Mastery</h2></div>
+                    </div>
+                </div>
+
             </div>
         )
     }
