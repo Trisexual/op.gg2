@@ -10,8 +10,9 @@ import { Container, Row, Col } from 'react-bootstrap';
 
 import { useAccordionToggle } from 'react-bootstrap/AccordionToggle';
 
-import findSumm from "./dragon/findSummSpell"
-import findChamp from "./dragon/findChampion"
+import findSumm from "./dragon/findSummSpell";
+import findChamp from "./dragon/findChampion";
+import findQueue from "./dragon/findQueueType";
 
 
 
@@ -135,10 +136,10 @@ export class App extends React.Component {
     //currently gets 10 games, can change later
     //get games, then run through a game and set some states based on the info in the game
     await axios.post("http://localhost:3000/joker/baby", {"url": "https://americas.api.riotgames.com/lol/match/v5/matches/by-puuid/" + this.state.puuid + "/ids?start=0&count=10"})
-      .then(res => {
-        this.setState({matchesFound:res.data.length});
+      .then(summ => {
+        this.setState({matchesFound:summ.data.length});
         for(let i = 0; i < (this.state.matchesFound); i++){
-          axios.post("http://localhost:3000/joker/baby", {"url": "https://americas.api.riotgames.com/lol/match/v5/matches/" + res.data[i]})
+          axios.post("http://localhost:3000/joker/baby", {"url": "https://americas.api.riotgames.com/lol/match/v5/matches/" + summ.data[i]})
             .then(res => {
 
               console.log(res.data);
@@ -291,81 +292,154 @@ export class App extends React.Component {
 
               let fakeUpper = this.state.upperAccordion;
               let playerInfo = null;
-              let months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
-              let fuckingDate = new Date(res.data.info.gameCreation)
-              let month = months[fuckingDate.getMonth()];
-              let day = fuckingDate.getDate()
-              let year = fuckingDate.getFullYear();
+              let fuckingDate = new Date(res.data.info.gameCreation);
+              let currentDate = new Date();
+              let diff = currentDate - fuckingDate;
+
+              let mins = 0;
+              let hours = 0;
+              let days = 0;
+              let months = 0;
+              
+              mins = Math.ceil(diff / 60000);
+              let toDisplay = [" mins", mins];
+
+              if(mins > 60){
+                hours = Math.ceil(diff / 360000);
+                toDisplay = [(hours == 1 ? " hour" : " hours"), hours];
+              }
+              if(hours > 24){
+                days = Math.ceil(diff / 86400000);
+                toDisplay = [(days == 1 ? " day" : " days"), days];
+              }
+              if(days > 30){
+                months = Math.ceil(diff / 2628000000);
+                toDisplay = [(months == 1 ? " month" : " months"), months];
+              }
 
               for(let j = 0; j < 10; j++){
-                if(res.data.info.participants[j].summonerName.toLowerCase() == personToSearch.toLowerCase()){
+                if(res.data.info.participants[j].summonerId === this.state.encryptedId){
                   playerInfo = res.data.info.participants[j]
 
-                  if(playerInfo.summonerName.toLowerCase() == personToSearch.toLowerCase()){
-                    let fakeWinLose = this.state.winLoseGame;
-                    if(j < 5){
-                      if(team1Won) fakeWinLose[i] = true;
-                      else fakeWinLose[i] = false;
-  
-                      this.setState({winLoseGame : fakeWinLose});
-                    }
-                    else{
-                      if(team1Won) fakeWinLose[i] = false;
-                      else fakeWinLose[i] = true;
-  
-                      this.setState({winLoseGame : fakeWinLose});
-                    }
-                    if(fakeWinLose[i]) this.setState((prevState) => ({gamesWon: prevState.gamesWon + 1})); 
+                  let fakeWinLose = this.state.winLoseGame;
+                  if(j < 5){
+                    if(team1Won) fakeWinLose[i] = true;
+                    else fakeWinLose[i] = false;
+
+                    this.setState({winLoseGame : fakeWinLose});
                   }
+                  else{
+                    if(team1Won) fakeWinLose[i] = false;
+                    else fakeWinLose[i] = true;
+
+                    this.setState({winLoseGame : fakeWinLose});
+                  }
+                  if(fakeWinLose[i]) this.setState((prevState) => ({gamesWon: prevState.gamesWon + 1})); 
 
                   break
                 }
               }
 
+              //only way i could figure out making a deep copy of an object
+              let gameName = JSON.parse(JSON.stringify(findQueue(res.data.info.queueId)));
+              gameName.description = gameName.description.replace("games", "");
+              
+              let othersTrue = false
+              if(gameName.description.indexOf("Ranked Flex") != -1){
+                gameName.description = "Ranked Flex";
+                othersTrue = true;
+              } else if(gameName.description.indexOf("Ranked Solo") != -1){
+                gameName.description = "Ranked Solo/Duo";
+                othersTrue = true;
+              } else if(gameName.description.indexOf("ARAM") != -1){
+                gameName.description = "ARAM";
+                othersTrue = true;
+              } else if(gameName.description.indexOf("Draft") != -1){
+                gameName.description = "Draft Pick";
+                othersTrue = true;
+              } else if(gameName.description.indexOf("Blind") != -1){
+                gameName.description = "Blind Pick";
+                othersTrue = true;
+              } else{
+                gameName.description = "RGM";
+              }
+
               fakeUpper[i] = (
               <div className = {this.state.winLoseGame[i] ? "gameInfoUnopened gameUnopenedWinner" : "gameInfoUnopened gameUnopenedLoser"}>
-                <div className = "unOpenedLeftSide">
-                  <div className = "winLoseInfo">
-                    <h1>{this.state.winLoseGame[i] ? "Victory" : "Defeat"}</h1>
-                  </div>
-
-                  <div className = "gameStuffInfo">
-                    <h2>{"Ranked Flex"}</h2>
-                    <h2>{"Summoner's Rift"}</h2>
-                  </div>
-
-                  <div className = "gameStuffInfo">
-                    <h2>{Math.floor(res.data.info.gameDuration / 1000 / 60).toString() + "m " + (Math.floor(res.data.info.gameDuration / 1000) % 60).toString() + "s"}</h2>
-                    <h2>{month + " " + day + " " + year}</h2>
-                  </div>
-                </div>
-
-                <div className = "unOpenedPlayerInfo">
-                  <div className = "gameStuff">
-                    <Image src={`../images/champion/${playerInfo.championName}.png`} alt = "champion" className = "championImage" roundedCircle/>
-                    <div className = "summonerSpellContainer">
-                      <Image src ={`../images/spell/${findSumm(playerInfo.summoner1Id).image.full}`} className = "summonerSpellImage" />
-                      <Image src ={`../images/spell/${findSumm(playerInfo.summoner2Id).image.full}`} className = "summonerSpellImage" />
-                      <div style = {{width:"1vw"}} />
+                
+                <Container fluid>
+                <Row>
+                <Col md = {5} xs = {12} sm = {12} style = {{height:"9vh"}}>
+                  <div className = "unOpenedLeftSide">
+                    <div className = "winLoseInfo">
+                      <h1>{this.state.winLoseGame[i] ? "Victory" : "Defeat"}</h1>
                     </div>
-                    
-                    <div className = "unOpenedItems">
-                      {[...Array(7)].map((value, index) => {
-                          let currentItem = playerInfo["item" + index.toString()]
 
-                          if(currentItem == "0") return (<img src={`../images/item/emptyItemSlot.png`} className = "normalItem"/>);
-                          else return(<img src={`../images/item/${playerInfo["item" + index.toString()]}.png`} className = "normalItem"/>);
-                      })}
+                    <div className = "gameStuffInfo">
+                      <h2>{gameName.description}</h2>
+                      <h2>{gameName.map}</h2>
+                    </div>
+
+                    <div className = "gameStuffInfo" style = {{width:"25%"}}>
+                      <h2>{Math.floor(res.data.info.gameDuration / 1000 / 60).toString() + "m " + (Math.floor(res.data.info.gameDuration / 1000) % 60).toString() + "s"}</h2>
+                      <h2>{toDisplay[1].toString() + toDisplay[0] + " ago"}</h2>
+                    </div>
                   </div>
+                </Col>
+                <Col md = {7} xs = {12} sm = {12} style = {{height:"9vh"}}>
+
+                  <div className = "unOpenedPlayerInfo">
+
+                    <div className = "gameStuff">
+                      <Image src={`../images/champion/${playerInfo.championName}.png`} alt = "champion" className = "championImage" roundedCircle/>
+                      <div className = "summonerSpellContainer">
+                        <Image src ={`../images/spell/${findSumm(playerInfo.summoner1Id).image.full}`} className = "summonerSpellImage" />
+                        <Image src ={`../images/spell/${findSumm(playerInfo.summoner2Id).image.full}`} className = "summonerSpellImage" />
+                        <div style = {{width:"1vw"}} />
+                      </div>
+
+
+
+                      
+                      <Container fluid={true} style = {{height:"100%"}}>
+                      <Row style = {{height:"100%"}} noGutter>
+
+                        <Col md = {6} xs = {12} sm = {12} className = "unOpenedItems goRight">
+                          {[...Array(4)].map((value, index) => {
+                              let currentItem = playerInfo["item" + index.toString()]
+                              console.log("item" + index.toString())
+
+                              if(currentItem == "0") return (<img src={`../images/item/emptyItemSlot.png`} className = "normalItem"/>);
+                              else return(<img src={`../images/item/${playerInfo["item" + index.toString()]}.png`} className = "normalItem"/>);
+                          })}
+                        </Col>
+
+                        <Col md = {6} xs = {12} sm = {12} className = "unOpenedItems goLeft" >
+                          {[...Array(3)].map((value, index) => {
+                              let currentItem = playerInfo["item" + (index+4).toString()]
+
+                              if(currentItem == "0") return (<img src={`../images/item/emptyItemSlot.png`} className = "normalItem"/>);
+                              else return(<img src={`../images/item/${playerInfo["item" + (index+4).toString()]}.png`} className = "normalItem"/>);
+                          })}
+                        </Col>
+
+                      </Row>
+                      </Container>
+
                   </div>
 
-                  <div className = "unOpenedRightSide">
-                    <h2>{playerInfo.kills + "/" + playerInfo.deaths + "/" + playerInfo.assists}</h2>
-                    <h2>{playerInfo.totalMinionsKilled + " CS"}</h2>
-                    <h2>{playerInfo.goldEarned + " Gold"}</h2>
+                    <div className = "unOpenedRightSide">
+                      <h2>{playerInfo.kills + "/" + playerInfo.deaths + "/" + playerInfo.assists}</h2>
+                      <h2>{playerInfo.totalMinionsKilled + " CS"}</h2>
+                      <h2>{playerInfo.goldEarned + " Gold"}</h2>
+                    </div>
                   </div>
-                </div>
-              </div>  
+                </Col>
+
+                </Row> 
+                </Container> 
+              </div>
+              
               );
               
               let fakeFavRole = this.state.favRole;
@@ -394,9 +468,6 @@ export class App extends React.Component {
               else{
                 fakeFavRole.push({"role" : playerInfo.individualPosition, "count" : 1})
               }
-
-              console.log(fakeFavChamp)
-              console.log(fakeFavRole)
 
               this.setState((prevState) => ({
                 upperAccordion : fakeUpper, 
@@ -478,8 +549,8 @@ export class App extends React.Component {
 
     if(this.state.matchesFound == 0){
       gameRenders.push(
-        <div>
-
+        <div style = {{marginTop:"5vh"}}>
+          <h2>There were no games played this season</h2>
         </div>
       )
     }
