@@ -151,69 +151,65 @@ export class App extends React.Component {
 
               for(let i = 0; i < 10; i++){
 
-                let currentChamp = res.data.info.participants[i].championName
-                let currentSumm = res.data.info.participants[i].summonerName
                 let participants = res.data.info.participants
 
-                let shitToPutIn = [
-                <div style = {{"width" : "2%"}} />,
+                let shitToPutIn = (<div className = "unOpenedPlayerInfo padded">
 
-
-                <div style = {{"width" : "10%", "display": "flex", alignItems:"center"}}>
-                  {/*champion pngs*/}
-                  <Image src={`../images/champion/${currentChamp}.png`} alt = "champion" className = "championImage" roundedCircle/>
-
-                  <div className = "summonerSpellContainer">
-                    {/*summoner spell pngs*/}
+                <div className = "gameStuff">
+                  <Image src={`../images/champion/${participants[i].championName}.png`} alt = "champion" className = "championImage" roundedCircle/>
+                  <div className = "summonerSpellContainer" style = {{width:"15%"}}>
                     <Image src ={`../images/spell/${findSumm(participants[i].summoner1Id).image.full}`} className = "summonerSpellImage" />
                     <Image src ={`../images/spell/${findSumm(participants[i].summoner2Id).image.full}`} className = "summonerSpellImage" />
+                    <div style = {{width:"1vw"}} />
                   </div>
+                  
+                  <Container fluid={true} style = {{height:"100%"}}>
+                  <Row style = {{height:"100%"}} noGutter>
 
-                </div>,
+                    <Col md = {6} xs = {12} sm = {12} className = "unOpenedItems goRight">
+                      {[...Array(4)].map((value, index) => {
+                          let currentItem = participants[i]["item" + index.toString()]
+                          console.log("item" + index.toString())
 
-                <div style = {{"width" : "25%", "justifyContent" : "left"}} className = "gameInfoTextBox">
-                  <h1>{currentSumm}</h1>
-                </div>,
+                          if(currentItem == "0") return (<img src={`../images/item/emptyItemSlot.png`} className = "normalItem2"/>);
+                          else return(<img src={`../images/item/${participants[i]["item" + index.toString()]}.png`} className = "normalItem2"/>);
+                      })}
+                    </Col>
 
-                <div style = {{"width" : "14%"}} className = "gameInfoTextBox">
-                  <h1>{participants[i].kills + "/" + participants[i].deaths + "/" + participants[i].assists}</h1>
-                </div>,
+                    <Col md = {6} xs = {12} sm = {12} className = "unOpenedItems goLeft" >
+                      {[...Array(3)].map((value, index) => {
+                          let currentItem = participants[i]["item" + (index+4).toString()]
 
-                <div style = {{"width" : "14%"}} className = "gameInfoTextBox">
-                  <h1>{participants[i].totalDamageDealtToChampions}</h1>
-                </div>,
+                          if(currentItem == "0") return (<img src={`../images/item/emptyItemSlot.png`} className = "normalItem2"/>);
+                          else return(<img src={`../images/item/${participants[i]["item" + (index+4).toString()]}.png`} className = "normalItem2"/>);
+                      })}
+                    </Col>
 
-                <div style = {{"width" : "14%"}} className = "gameInfoTextBox">
-                  <h1>{participants[i].totalMinionsKilled}</h1>
-                </div>,
+                  </Row>
+                  </Container>
 
-                <div style = {{"width" : "20%"}} className = "gameInfoTextBox">
-                  {
+              </div>
 
-                  //this shit is imossible to read
-                  //basically loops through the current players items using map function
-                  //if the item is 0, then uses a div to imitate a unused item slot
-
-                  [...Array(7)].map((value, index) => {
-                    let currentItem = participants[i]["item" + index.toString()]
-
-                    if(currentItem == "0") return (<img src={`../images/item/emptyItemSlot.png`} className = "normalItem"/>);
-                    else return(<img src={`../images/item/${participants[i]["item" + index.toString()]}.png`} className = "normalItem"/>);
-                  })}
-
-                </div>]
+                <div className = "unOpenedRightSide">
+                  <h2>{participants[i].kills + "/" + participants[i].deaths + "/" + participants[i].assists}</h2>
+                  <h2>{participants[i].totalMinionsKilled + " CS"}</h2>
+                  <h2>{participants[i].goldEarned + " Gold"}</h2>
+                </div>
+              </div>);
 
                 if(i < 5){
                   team1.push(
-                    <div className = "flexBoxLmao">
-                      {shitToPutIn}
-                    </div>)
+                  <div style = {{height:"9vh"}}>
+                    {shitToPutIn}
+                  </div>
+                    )
                 }
                 else{
                   team2.push(
-                    <div className = "flexBoxLmao">
-                      {shitToPutIn}
-                    </div>)
+                  <div style = {{height:"9vh"}}>
+                    {shitToPutIn}
+                  </div>
+                  )
                 }
               }
               
@@ -258,9 +254,6 @@ export class App extends React.Component {
                     {team1}
                   </div>
 
-
-
-                  
                   <div className = {team1Won ? "losingTeam" : "winningTeam"}>
 
                     <div className = "topOfInfo">
@@ -275,9 +268,7 @@ export class App extends React.Component {
                         <h1>Red Team</h1>
                       </div>
                       
-
                       {topMostRow}
-
 
                     </div>
 
@@ -380,7 +371,7 @@ export class App extends React.Component {
                       <h2>{gameName.map}</h2>
                     </div>
 
-                    <div className = "gameStuffInfo" style = {{width:"25%"}}>
+                    <div className = "gameStuffInfo" style = {{width:"30%"}}>
                       <h2>{Math.floor(res.data.info.gameDuration / 1000 / 60).toString() + "m " + (Math.floor(res.data.info.gameDuration / 1000) % 60).toString() + "s"}</h2>
                       <h2>{toDisplay[1].toString() + toDisplay[0] + " ago"}</h2>
                     </div>
@@ -392,7 +383,7 @@ export class App extends React.Component {
 
                     <div className = "gameStuff">
                       <Image src={`../images/champion/${playerInfo.championName}.png`} alt = "champion" className = "championImage" roundedCircle/>
-                      <div className = "summonerSpellContainer">
+                      <div className = "summonerSpellContainer" style = {{width:"15%"}}>
                         <Image src ={`../images/spell/${findSumm(playerInfo.summoner1Id).image.full}`} className = "summonerSpellImage" />
                         <Image src ={`../images/spell/${findSumm(playerInfo.summoner2Id).image.full}`} className = "summonerSpellImage" />
                         <div style = {{width:"1vw"}} />
