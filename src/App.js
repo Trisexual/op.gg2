@@ -23,6 +23,11 @@ import findQueue from "./dragon/findQueueType";
 
 
 
+//this entire code is a big fuck you to everyone reading this, since only i can read it without requiring several doses of
+//aderall to keep themselves from losing focus from this shitshow
+//im gonna be honest the easiest way to navigate is to use ctrl f whehnever you want to see where i stored some css
+//as well as using inspect element on the webpage to find specific things (ctrl-shift-c)
+
 
 function CustomToggle({ children, eventKey, winLose }) {
   const decoratedOnClick = useAccordionToggle(eventKey
@@ -69,8 +74,14 @@ export class App extends React.Component {
         favRole: [],
         favChamp: [],
 
-        matchesFound : 0
+        matchesFound : 0,
+        matchDataDone : 0,
+        finishedRendering : false
     }
+  }
+
+  numberWithCommas(x) {
+    return x.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",");
   }
 
   async componentDidMount(){
@@ -138,6 +149,7 @@ export class App extends React.Component {
     await axios.post("http://localhost:3000/joker/baby", {"url": "https://americas.api.riotgames.com/lol/match/v5/matches/by-puuid/" + this.state.puuid + "/ids?start=0&count=10"})
       .then(summ => {
         this.setState({matchesFound:summ.data.length});
+        console.log(summ);
         for(let i = 0; i < (this.state.matchesFound); i++){
           axios.post("http://localhost:3000/joker/baby", {"url": "https://americas.api.riotgames.com/lol/match/v5/matches/" + summ.data[i]})
             .then(res => {
@@ -148,54 +160,87 @@ export class App extends React.Component {
 
               let team1Won = false;
               if(res.data.info.teams[0].win) team1Won = true;
+              
+              let highestDmg = 0;
+              let playersTeam = 1;
+              let playerWon = false;
+              for(let i = 0; i < 10; i++){
+                if(res.data.info.participants[i].totalDamageDealtToChampions > highestDmg) highestDmg = res.data.info.participants[i].totalDamageDealtToChampions
+                if(this.state.puuid == res.data.info.participants[i].puuid){
+                  if(i > 4) playersTeam = 2;
+                  else playersTeam = 1;
+
+                  playerWon = res.data.info.participants[i].win;
+                }
+              }
+
+              if(highestDmg == 0) highestDmg = 1;
 
               for(let i = 0; i < 10; i++){
 
                 let participants = res.data.info.participants
-
-                let shitToPutIn = (<div className = "unOpenedPlayerInfo padded">
-
-                <div className = "gameStuff">
-                  <Image src={`../images/champion/${participants[i].championName}.png`} alt = "champion" className = "championImage" roundedCircle/>
-                  <div className = "summonerSpellContainer" style = {{width:"15%"}}>
+              
+                let shitToPutIn = (               
+                <div className = "playerInfo" >
+                  <Image src={`../images/champion/${participants[i].championName}.png`} alt = "champion" className = "championImage2" roundedCircle/>
+                  <div className = "summonerSpellContainer" style = {{width:"5%", marginRight:"0"}}>
                     <Image src ={`../images/spell/${findSumm(participants[i].summoner1Id).image.full}`} className = "summonerSpellImage" />
                     <Image src ={`../images/spell/${findSumm(participants[i].summoner2Id).image.full}`} className = "summonerSpellImage" />
-                    <div style = {{width:"1vw"}} />
                   </div>
                   
-                  <Container fluid={true} style = {{height:"100%"}}>
-                  <Row style = {{height:"100%"}} noGutter>
+                  <div className = "nameHolder">
+                    <h2 className = "biggerH2">{participants[i].summonerName}</h2>
+                  </div>
 
-                    <Col md = {6} xs = {12} sm = {12} className = "unOpenedItems goRight">
-                      {[...Array(4)].map((value, index) => {
+                  <div style = {{height:"100%", width:"10%"}} className = "scoreContainer">
+                    <h2 className = "biggerH2">{participants[i].kills + "/" + participants[i].deaths + "/" + participants[i].assists}</h2>
+                    <div className = "textImageHolder" style = {{height:"50%"}}>
+                      <h2>{participants[i].totalMinionsKilled.toString()}</h2>
+                      <Image src ={`../images/ui/minions.png`} className = "uiImage"/>
+                    </div>
+                  </div>
+
+                  <Container style = {{height:"100%", width:"30%", alignItems:"center", display:"flex"}}>
+                    <Row style = {{display:"flex", justifyContent:"flex-start"}} noGutter>
+
+                      <Col md = {6} xs = {12} sm = {12} className = "itemContainer goRight">
+                        {[...Array(4)].map((value, index) => {
                           let currentItem = participants[i]["item" + index.toString()]
-                          console.log("item" + index.toString())
 
-                          if(currentItem == "0") return (<img src={`../images/item/emptyItemSlot.png`} className = "normalItem2"/>);
-                          else return(<img src={`../images/item/${participants[i]["item" + index.toString()]}.png`} className = "normalItem2"/>);
-                      })}
-                    </Col>
-
-                    <Col md = {6} xs = {12} sm = {12} className = "unOpenedItems goLeft" >
-                      {[...Array(3)].map((value, index) => {
+                          if(currentItem == "0") return (<img src={`../images/item/emptyItemSlot.png`} className = "normalItem"/>);
+                          else return(<img src={`../images/item/${participants[i]["item" + index.toString()]}.png`} className = "normalItem"/>);
+                        })}
+                      </Col>
+                      <Col md = {6} xs = {12} sm = {12} className = "itemContainer goLeft" >
+                        {[...Array(3)].map((value, index) => {
                           let currentItem = participants[i]["item" + (index+4).toString()]
 
-                          if(currentItem == "0") return (<img src={`../images/item/emptyItemSlot.png`} className = "normalItem2"/>);
-                          else return(<img src={`../images/item/${participants[i]["item" + (index+4).toString()]}.png`} className = "normalItem2"/>);
-                      })}
-                    </Col>
+                          if(currentItem == "0") return (<img src={`../images/item/emptyItemSlot.png`} className = "normalItem"/>);
+                          else return(<img src={`../images/item/${participants[i]["item" + (index+4).toString()]}.png`} className = "normalItem"/>);
+                        })}
+                      </Col>
 
-                  </Row>
+                    </Row>
                   </Container>
 
-              </div>
+                  <div style = {{height:"100%", width:"20%"}} className = "scoreContainer">
 
-                <div className = "unOpenedRightSide">
-                  <h2>{participants[i].kills + "/" + participants[i].deaths + "/" + participants[i].assists}</h2>
-                  <h2>{participants[i].totalMinionsKilled + " CS"}</h2>
-                  <h2>{participants[i].goldEarned + " Gold"}</h2>
+                    <div className = "textImageHolder" style = {{height:"50%"}}>
+                      <h2>{this.numberWithCommas(participants[i].goldEarned)}</h2>
+                      <Image src ={`../images/ui/gold.png`} className = "uiImage"  />
+                    </div>
+                    
+                    <div className = "dmgBackBar">
+                      <div className = "dmgNumber"> 
+                        <h2>{this.numberWithCommas(participants[i].totalDamageDealtToChampions)}</h2>
+                      </div>
+                      <div className="dmgBar" style = {{height:"100%", width: (100 * (participants[i].totalDamageDealtToChampions / highestDmg)).toString() + "%"}} />
+                    </div>
+                  </div>
+
+
                 </div>
-              </div>);
+              );
 
                 if(i < 5){
                   team1.push(
@@ -213,69 +258,90 @@ export class App extends React.Component {
                 }
               }
               
-              let topMostRow = [
-                <div style ={{"width" : "14%"}} className = "gameInfoTextBox">
-                  <h2>K/D/A</h2>
-                </div>,
-
-                <div style ={{"width" : "14%"}} className = "gameInfoTextBox">
-                  <h2>Damage</h2>
-                </div>,
-
-                <div style ={{"width" : "14%"}} className = "gameInfoTextBox">
-                  <h2>CS</h2>
-                </div>,
-
-                <div style ={{"width" : "20%"}} className = "gameInfoTextBox">
-                  <h2>Items</h2>
-                </div>]
-
-
-
-              let temp = [
-                <div>
-                  <div className = {team1Won ? "winningTeam" : "losingTeam"}>
-
-                    <div className = "topOfInfo">
-                      <div style = {{"width" : "7.5%"}} className = "gameInfoTextBox" >
-                        <h1 className = {team1Won ? "blueTextWinner" : "redTextLoser"}>{team1Won ? "Win" : "Loss"}</h1>
-                      </div>
-
-                      <div style = {{"width" : "4.5%"}} />
-
-                      <div style = {{"width" : "25%", "justifyContent":"left"}} className = "gameInfoTextBox">
-                        <h1>Blue Team</h1>
-                      </div>
-
-                      {topMostRow}
-
-                    </div>
-
-                    {team1}
+              let topRow1 = (
+                <div className = "topRow">
+                  <div className = "textImageHolder" style = {{width:"33%"}}>
+                    <Image src ={`../images/ui/baron${team1Won ? "Blue" : "Red"}2.png`} className = "uiImage" style = {{maxHeight:"70%", maxWidth:'50%'}} />
+                    <h2>{res.data.info.teams[0].objectives.baron.kills.toString()}</h2>
                   </div>
 
-                  <div className = {team1Won ? "losingTeam" : "winningTeam"}>
+                  <div className = "textImageHolder" style = {{width:"33%"}}>
+                    <Image src ={`../images/ui/dragon${team1Won ? "Blue" : "Red"}2.png`} className = "uiImage" style = {{maxHeight:"70%", maxWidth:'50%'}} />
+                    <h2>{res.data.info.teams[0].objectives.dragon.kills.toString()}</h2>
+                  </div>
 
-                    <div className = "topOfInfo">
-
-                      <div style = {{"width" : "7.5%"}} className = "gameInfoTextBox" >
-                        <h1 className = {team1Won ? "redTextLoser" : "blueTextWinner"}>{team1Won ? "Loss" : "Win"}</h1>
-                      </div>
-
-                      <div style = {{"width" : "4.5%"}} />
-
-                      <div style = {{"width" : "25%", "justifyContent":"left"}} className = "gameInfoTextBox">
-                        <h1>Red Team</h1>
-                      </div>
-                      
-                      {topMostRow}
-
-                    </div>
-
-                    {team2}
+                  <div className = "textImageHolder" style = {{width:"33%"}}>
+                    <Image src ={`../images/ui/tower${team1Won ? "Blue" : "Red"}2.png`} className = "uiImage" style = {{maxHeight:"70%", maxWidth:'50%'}} />
+                    <h2>{res.data.info.teams[0].objectives.tower.kills.toString()}</h2>
                   </div>
                 </div>
-              ];
+              )
+
+              let topRow2 = (
+                <div className = "topRow">
+                  <div className = "textImageHolder" style = {{width:"33%"}}>
+                    <Image src ={`../images/ui/baron${team1Won ? "Red" : "Blue"}2.png`} className = "uiImage" style = {{maxHeight:"70%", maxWidth:"50%"}} />
+                    <h2>{res.data.info.teams[1].objectives.baron.kills.toString()}</h2>
+                  </div>
+
+                  <div className = "textImageHolder" style = {{width:"33%"}}>
+                    <Image src ={`../images/ui/dragon${team1Won ? "Red" : "Blue"}2.png`} className = "uiImage" style = {{maxHeight:"70%", maxWidth:'50%'}} />
+                    <h2>{res.data.info.teams[1].objectives.dragon.kills.toString()}</h2>
+                  </div>
+
+                  <div className = "textImageHolder" style = {{width:"33%"}}>
+                    <Image src ={`../images/ui/tower${team1Won ? "Red" : "Blue"}2.png`} className = "uiImage" style = {{maxHeight:"70%", maxWidth:'50%'}} />
+                    <h2>{res.data.info.teams[1].objectives.tower.kills.toString()}</h2>
+                  </div>
+                </div>
+              )
+
+
+
+              let temp = (
+                <div>
+                  <div className = {playerWon ? "winningTeam" : "losingTeam"}>
+
+                    <div className = "topOfInfo">
+                      <div style = {{"width" : "7.5%"}} className = "gameInfoTextBox" >
+                        <h1 className = {playerWon ? "blueTextWinner" : "redTextLoser"}>{playerWon ? "Win" : "Loss"}</h1>
+                      </div>
+
+                      <div style = {{"width" : "4.5%"}} />
+
+                      <div style = {{"width" : "25%", "justifyContent":"left"}} className = "gameInfoTextBox">
+                        <h1>{playersTeam == 1 ? "Blue" : "Red"} Team</h1>
+                      </div>
+
+                      {playersTeam == 1 ? topRow1 : topRow2}
+
+                    </div>
+
+                    {playersTeam == 1 ? team1 : team2}
+                  </div>
+
+                  <div className = {playerWon ? "losingTeam" : "winningTeam"}>
+
+                    <div className = "topOfInfo">
+
+                      <div style = {{"width" : "7.5%"}} className = "gameInfoTextBox" >
+                        <h1 className = {playerWon ? "redTextLoser" : "blueTextWinner"}>{playerWon ? "Loss" : "Win"}</h1>
+                      </div>
+
+                      <div style = {{"width" : "4.5%"}} />
+
+                      <div style = {{"width" : "25%", "justifyContent":"left"}} className = "gameInfoTextBox">
+                        <h1>{playersTeam == 1 ? "Red" : "Blue"} Team</h1>
+                      </div>
+                      
+                      {playersTeam == 2 ? topRow1 : topRow2}
+
+                    </div>
+
+                    {playersTeam == 2 ? team1 : team2}
+                  </div>
+                </div>
+              );
 
               let fakeMatches = this.state.matches;
               fakeMatches[i] = temp;
@@ -283,7 +349,7 @@ export class App extends React.Component {
 
               let fakeUpper = this.state.upperAccordion;
               let playerInfo = null;
-              let fuckingDate = new Date(res.data.info.gameCreation);
+              let fuckingDate = new Date(res.data.info.gameCreation + res.data.info.gameDuration);
               let currentDate = new Date();
               let diff = currentDate - fuckingDate;
 
@@ -296,17 +362,19 @@ export class App extends React.Component {
               let toDisplay = [" mins", mins];
 
               if(mins > 60){
-                hours = Math.ceil(diff / 360000);
+                hours = Math.round(diff / 3600000);
                 toDisplay = [(hours == 1 ? " hour" : " hours"), hours];
               }
               if(hours > 24){
-                days = Math.ceil(diff / 86400000);
+                days = Math.round(diff / 86400000);
                 toDisplay = [(days == 1 ? " day" : " days"), days];
               }
               if(days > 30){
-                months = Math.ceil(diff / 2628000000);
+                months = Math.round(diff / 2628000000);
                 toDisplay = [(months == 1 ? " month" : " months"), months];
               }
+
+              if(days == 2){console.log(diff)}
 
               for(let j = 0; j < 10; j++){
                 if(res.data.info.participants[j].summonerId === this.state.encryptedId){
@@ -340,7 +408,7 @@ export class App extends React.Component {
                 gameName.description = "Ranked Flex";
                 othersTrue = true;
               } else if(gameName.description.indexOf("Ranked Solo") != -1){
-                gameName.description = "Ranked Solo/Duo";
+                gameName.description = "Ranked Solo";
                 othersTrue = true;
               } else if(gameName.description.indexOf("ARAM") != -1){
                 gameName.description = "ARAM";
@@ -359,25 +427,25 @@ export class App extends React.Component {
               <div className = {this.state.winLoseGame[i] ? "gameInfoUnopened gameUnopenedWinner" : "gameInfoUnopened gameUnopenedLoser"}>
                 
                 <Container fluid>
-                <Row>
-                <Col md = {5} xs = {12} sm = {12} style = {{height:"9vh"}}>
+                <Row noGutters = {true}>
+                <Col lg = {5} md = {12} xs = {12} sm = {12} style = {{height:"9vh"}}>
                   <div className = "unOpenedLeftSide">
-                    <div className = "winLoseInfo">
+                    <div className = "winLoseInfo" style = {{width:"30%"}}>
                       <h1>{this.state.winLoseGame[i] ? "Victory" : "Defeat"}</h1>
                     </div>
 
-                    <div className = "gameStuffInfo">
+                    <div className = "gameStuffInfo ellipsisCutoff" style = {{width:"45%"}}>
                       <h2>{gameName.description}</h2>
                       <h2>{gameName.map}</h2>
                     </div>
 
-                    <div className = "gameStuffInfo" style = {{width:"30%"}}>
+                    <div className = "gameStuffInfo" style = {{width:"25%"}}>
                       <h2>{Math.floor(res.data.info.gameDuration / 1000 / 60).toString() + "m " + (Math.floor(res.data.info.gameDuration / 1000) % 60).toString() + "s"}</h2>
                       <h2>{toDisplay[1].toString() + toDisplay[0] + " ago"}</h2>
                     </div>
                   </div>
                 </Col>
-                <Col md = {7} xs = {12} sm = {12} style = {{height:"9vh"}}>
+                <Col lg = {7} md = {12} xs = {12} sm = {12} style = {{height:"9vh"}}>
 
                   <div className = "unOpenedPlayerInfo">
 
@@ -398,7 +466,6 @@ export class App extends React.Component {
                         <Col md = {6} xs = {12} sm = {12} className = "unOpenedItems goRight">
                           {[...Array(4)].map((value, index) => {
                               let currentItem = playerInfo["item" + index.toString()]
-                              console.log("item" + index.toString())
 
                               if(currentItem == "0") return (<img src={`../images/item/emptyItemSlot.png`} className = "normalItem"/>);
                               else return(<img src={`../images/item/${playerInfo["item" + index.toString()]}.png`} className = "normalItem"/>);
@@ -420,9 +487,19 @@ export class App extends React.Component {
                   </div>
 
                     <div className = "unOpenedRightSide">
+                      
                       <h2>{playerInfo.kills + "/" + playerInfo.deaths + "/" + playerInfo.assists}</h2>
-                      <h2>{playerInfo.totalMinionsKilled + " CS"}</h2>
-                      <h2>{playerInfo.goldEarned + " Gold"}</h2>
+
+                      <div className = "textImageHolder" style = {{justifyContent:"flex-start"}}>
+                        <h2 style = {{color:"black"}}>{this.numberWithCommas(playerInfo.totalMinionsKilled)}</h2>
+                        <Image src ={`../images/ui/minions.png`} className = "uiImage" style = {{maxWidth:"14%"}} />
+                      </div>
+
+                      <div className = "textImageHolder" style = {{justifyContent:"flex-start"}}>
+                        <h2 style = {{color:"black"}}>{this.numberWithCommas(playerInfo.goldEarned)}</h2>
+                        <Image src ={`../images/ui/gold.png`} className = "uiImage" style = {{maxWidth:"14%"}} />
+                      </div>
+
                     </div>
                   </div>
                 </Col>
@@ -435,29 +512,29 @@ export class App extends React.Component {
               
               let fakeFavRole = this.state.favRole;
               let fakeFavChamp = this.state.favChamp;
-              
-              let foundRole = -1
-              let foundChamp = -1
+
+              let foundRole = -1;
+              let foundChamp = -1;
               for(let i = 0; i < fakeFavChamp.length; i++){
-                if(fakeFavChamp[i]["champ"] == playerInfo.championName) foundChamp = i
+                if(fakeFavChamp[i]["champ"] == playerInfo.championId) foundChamp = i;
               }
               if(foundChamp != -1){
-                fakeFavChamp[foundChamp]["count"] += 1
+                fakeFavChamp[foundChamp]["count"] += 1;
               }
               else{
-                fakeFavChamp.push({"champ" : playerInfo.championName, "count" : 1})
+                fakeFavChamp.push({"champ" : playerInfo.championId, "count" : 1});
               }
 
 
-              if(playerInfo.individualPosition == "UTILITY") playerInfo.individualPosition = "SUPPORT"
+              if(playerInfo.individualPosition == "UTILITY") playerInfo.individualPosition = "SUPPORT";
               for(let i = 0; i < fakeFavRole.length; i++){
-                if(fakeFavRole[i]["role"] == playerInfo.individualPosition) foundRole = i
+                if(fakeFavRole[i]["role"] == playerInfo.individualPosition) foundRole = i;
               }
               if(foundRole != -1){
-                fakeFavRole[foundRole]["count"] += 1
+                fakeFavRole[foundRole]["count"] += 1;
               }
               else{
-                fakeFavRole.push({"role" : playerInfo.individualPosition, "count" : 1})
+                if(playerInfo.individualPosition != "Invalid") fakeFavRole.push({"role" : playerInfo.individualPosition, "count" : 1})
               }
 
               this.setState((prevState) => ({
@@ -469,7 +546,9 @@ export class App extends React.Component {
                 favChamp : fakeFavChamp,
                 favRole : fakeFavRole
               })); 
-            })
+            });
+
+          this.setState(prev => {return {matchDataDone: prev.matchDataDone + 1}});
         }
       })
 
@@ -506,7 +585,10 @@ export class App extends React.Component {
 
           //fakeMasteryData.push(item)
         }
-        this.setState({masteryData : fakeMasteryData});
+        this.setState({
+          masteryData : fakeMasteryData,
+          finishedRendering : true
+        });
       })
   }
 
@@ -559,85 +641,90 @@ export class App extends React.Component {
       }
     }
 
+    favouriteChampion["champ"] = findChamp(favouriteChampion["champ"]).name;
 
-    return (
-      <div className = "everythingContainer">
-        
+    if(!(this.state.finishedRendering && this.state.matchDataDone >= 10) && false){
+      return(<div></div>);
+    }
+    else if (true){
+      return (
+        <div className = "everythingContainer">
+          
 
-        <div className="summonerInfoContainer">
+          <div className="summonerInfoContainer">
 
-        <Container>
-        <Row>
+          <Container>
+          <Row>
 
-          <Col md = {6} xs = {12} sm = {12}>
-            <div className = "leftSide">
+            <Col lg = {6} md = {12} xs = {12} sm = {12}>
+              <div className = "leftSide">
 
-              <div className = "playerInfoStuff">
-                <img src={`../images/profileicon/${this.state.summonerProfile}.png`} className = "summonerInfoImage"/>
-                
-                <div style = {{marginLeft:"1vw", width : "max(20vw, 40vh)"}} className = "summonerInfoText">
-                  <h1 className = "specialText">{this.state.summonerName}</h1>
-                  <h1 className = "thinText">Level {this.state.summonerLevel}</h1>
-                </div>
-              </div>
-
-              <div className = "championMastery flex">
-                {this.state.masteryData}
-              </div>
-
-            </div>
-            
-          </Col>
-          <Col md = {6} xs = {12} sm = {12}>
-
-            <div style = {{"height":"70vh"}}>
-              <div className = "rankedInfoContainer">
-
-                <div className = "rankedInfo">
-                  <h2 className = "rankedTitle">Ranked Solo</h2>
-                  <h1>{this.state.rankedSoloInfo.tier[0].toUpperCase()}{this.state.rankedSoloInfo.tier.slice(1,10000000).toLowerCase()} {this.state.rankedSoloInfo.rank == "unranked" ? "" : this.state.rankedSoloInfo.rank}</h1>
-                  <h1 className = "thinText">{this.state.rankedSoloInfo.lp} LP</h1>
-                  <Image src={`../images/ranked-emblems/${this.state.rankedSoloInfo.tier}.png`} alt="rankedEmblem" className = "rankedEmblems" />
+                <div className = "playerInfoStuff">
+                  <img src={`../images/profileicon/${this.state.summonerProfile}.png`} className = "summonerInfoImage"/>
+                  
+                  <div style = {{marginLeft:"1vw", width : "max(20vw, 40vh)"}} className = "summonerInfoText">
+                    <h1 className = "specialText">{this.state.summonerName}</h1>
+                    <h1 className = "thinText">Level {this.state.summonerLevel}</h1>
+                  </div>
                 </div>
 
-                <div className = "rankedInfo">
-                  <h2 className = "rankedTitle">Ranked Flex</h2>
-                  <h1>{this.state.rankedFlexInfo.tier[0].toUpperCase()}{this.state.rankedFlexInfo.tier.slice(1,10000000).toLowerCase()} {this.state.rankedFlexInfo.rank == "unranked" ? "" : this.state.rankedFlexInfo.rank}</h1>
-                  <h1 className = "thinText">{this.state.rankedFlexInfo.lp} LP</h1>
-                  <img src={`../images/ranked-emblems/${this.state.rankedFlexInfo.tier}.png`} alt="rankedEmblem" className = "rankedEmblems" />
-                </div> 
+                <div className = "championMastery flex">
+                  {this.state.masteryData}
+                </div>
 
               </div>
-
               
-              <div className = "AllGameInfo">
-                <div style = {{width : "10%"}}/>
-                <div style = {{width:"54%"}} className="allGameText">
-                  <h2>{this.state.gamesWon.toString() + (this.state.gamesWon == 1 ? " Win" : " Wins")}</h2>
-                  <h2>{(this.state.totalKills / 10).toString() + "/" + (this.state.totalDeaths / 10).toString() + "/" + (this.state.totalAssists / 10).toString() + " Average"}</h2>
-                  <h2>{favouriteChampion.champ + " - " + favouriteChampion.count.toString() + " Games"}</h2>
-                  <h2>{favouriteRole.role.slice(0,1) + favouriteRole.role.slice(1, favouriteRole.role.length).toLowerCase() + " - " + favouriteRole.count.toString() + " Games"}</h2>
+            </Col>
+            <Col lg = {6} md = {12} xs = {12} sm = {12}>
+
+              <div style = {{"height":"70vh"}}>
+                <div className = "rankedInfoContainer">
+
+                  <div className = "rankedInfo">
+                    <h2 className = "rankedTitle">Ranked Solo</h2>
+                    <h1>{this.state.rankedSoloInfo.tier[0].toUpperCase()}{this.state.rankedSoloInfo.tier.slice(1,10000000).toLowerCase()} {this.state.rankedSoloInfo.rank == "unranked" ? "" : this.state.rankedSoloInfo.rank}</h1>
+                    <h1 className = "thinText">{this.state.rankedSoloInfo.lp} LP</h1>
+                    <Image src={`../images/ranked-emblems/${this.state.rankedSoloInfo.tier}.png`} alt="rankedEmblem" className = "rankedEmblems" />
+                  </div>
+
+                  <div className = "rankedInfo">
+                    <h2 className = "rankedTitle">Ranked Flex</h2>
+                    <h1>{this.state.rankedFlexInfo.tier[0].toUpperCase()}{this.state.rankedFlexInfo.tier.slice(1,10000000).toLowerCase()} {this.state.rankedFlexInfo.rank == "unranked" ? "" : this.state.rankedFlexInfo.rank}</h1>
+                    <h1 className = "thinText">{this.state.rankedFlexInfo.lp} LP</h1>
+                    <img src={`../images/ranked-emblems/${this.state.rankedFlexInfo.tier}.png`} alt="rankedEmblem" className = "rankedEmblems" />
+                  </div> 
+
                 </div>
-                <div style = {{width : "25%"}}>
-                  <h1 className = "inTenGames">In {this.state.matchesFound.toString()} Games</h1>
+
+                
+                <div className = "AllGameInfo">
+                  <div style = {{width:"54%"}} className="allGameText">
+                    <h2>{this.state.gamesWon.toString() + (this.state.gamesWon == 1 ? " Win" : " Wins")}</h2>
+                    <h2>{(this.state.totalKills / 10).toString() + "/" + (this.state.totalDeaths / 10).toString() + "/" + (this.state.totalAssists / 10).toString() + " Average"}</h2>
+                    <h2>{favouriteChampion.champ + " - " + favouriteChampion.count.toString() + (favouriteChampion.count == 1 ? " Game" : " Games")}</h2>
+                    <h2>{favouriteRole.role.slice(0,1) + favouriteRole.role.slice(1, favouriteRole.role.length).toLowerCase() + " - " + favouriteRole.count.toString() + " Games"}</h2>
+                  </div>
+                  <div style = {{width : "30%"}}>
+                    <h1 className = "inTenGames">In {this.state.matchesFound.toString()} Games</h1>
+                  </div>
                 </div>
               </div>
-            </div>
 
-          </Col>
+            </Col>
 
-        </Row>
-        </Container>
+          </Row>
+          </Container>
+          </div>
+
+          
+
+          
+          
+          {gameRenders}
+
         </div>
-
-        
-
-        
-        
-        {gameRenders}
-
-      </div>
-    );
+      );
+    }
   }
 }
 

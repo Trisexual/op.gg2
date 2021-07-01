@@ -19,12 +19,12 @@
 
 .winningTeam{
     width : 100%;
-    background-color: lightblue;
+    background-color: rgb(205, 235, 245);
 }
 
 .losingTeam{
     width : 100%;
-    background-color: lightcoral;
+    background-color: rgb(255, 213, 213);
 }
 
 .accordionHead{
@@ -59,7 +59,6 @@
 }
 
 .normalItem{
-    width:12%;
     margin-left: 0.1vw;
     margin-right: 0.1vw;
 }
@@ -122,8 +121,6 @@
     width : max(12vw, 24vh);
     height:100%;
 }
-
-
 
 .rankedInfoContainer{
     display: flex;
@@ -282,7 +279,7 @@
     margin-left: 0.5vw;
     display: flex;
     align-items: center;
-    width:35%
+    width:30%
 }
 
 .winLoseInfo > h1{
@@ -300,12 +297,11 @@
     flex-direction: column;
     justify-content: center;
     align-items: flex-start;
-    width:35%;
-
+    width:37%;
 }
 
 .gameStuffInfo > h2{
-    font-size: min(3vh, 3.5vw) !important;
+    font-size: min(2.7vh, 2.7vw) !important;
     color:black;
 }
 
@@ -330,15 +326,6 @@
     max-height: 100%;
     width:auto;
     height:auto;
-}
-
-.unOpenedItems > .normalItem2{
-    max-width:24%;
-    max-height:100%;
-    width:auto;
-    height:auto;
-    margin-left: 0.1vw;
-    margin-right: 0.1vw;
 }
 
 .unOpenedRightSide{
@@ -371,10 +358,12 @@
     flex-direction: row;
 }
 
+
 .AllGameInfo{
     display: flex;
     text-align: left;
     align-items: center;
+    justify-content: center;
     height: 33%;
     font-size:100vw !important;
     background-color:#f1f1ed;
@@ -397,8 +386,158 @@
 }
 .goleft{
     justify-content: right;
-}
+} 
 
 .padded{
     padding : 0.5vh;
+}
+
+.inside{
+    height:100%;
+}
+
+.playerInfo{
+    width:100%;
+    height:9vh;
+    padding-top:0.5vh;
+    padding-bottom:0.5vh;
+    padding-left:0.5vw;
+    padding-right:0.5vw;
+
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+
+}
+
+.playerInfo > .championImage2{
+    max-height: 100%;
+    max-width:15%;
+    width:auto;
+    height:auto;
+}
+h2{
+    font-size: min(3vw, 3vh) !important;
+}
+
+.itemContainer{
+    margin:0 !important;
+    padding: 0 !important;
+    align-items:center;
+    display: flex;
+    margin-top: 1vh;
+    margin-bottom: 1vh;
+}
+
+.itemContainer > .normalItem{
+    max-width: 24%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+    margin-top: 0;
+    margin-bottom: 0;
+
+}
+
+.scoreContainer{
+    justify-content: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    margin-top: 1vh;
+    margin-bottom: 1vh;
+    margin-left:0.5vw;
+    margin-right:1vw;
+}
+
+.scoreContainer > h2{
+    font-size: min(2.5vw, 3vh) !important;
+}
+
+.nameHolder{
+    margin-right:1vw;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    text-align: left;
+    width:20%;
+}
+
+.nameHolder > h2{
+    overflow:hidden !important;
+    white-space: nowrap !important;
+    text-overflow: ellipsis !important;
+    line-height: normal !important;
+}
+
+.textImageHolder{
+    display: flex;
+    width:100%;
+    height:100%;
+    align-items: center;
+    justify-content: center;
+}
+
+.textImageHolder > h2{
+    font-size: min(2.5vw, 3vh) !important;
+}
+
+
+.uiImage{
+    width:auto;
+    height:auto;
+    max-width:20%;
+    max-height: 60%;
+    margin-left: 3%;
+    margin-right:3%;
+    margin-top:0.3vh;
+
+}
+
+.dmgBackBar{
+    width:75%;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    height:3vh;
+    background-color:#f1f1ed;
+    background-color: rgb(124, 124, 124);
+    border:1px solid rgb(51, 51, 51);
+    position: relative;
+}
+
+.dmgBar{
+    background-color: rgb(255, 149, 149);
+    background-color: rgb(255, 104, 98);
+}
+
+.dmgNumber{
+    position: absolute;
+    left:50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width:1px;
+    height:1px;
+    
+}
+
+.dmgNumber > h2{
+    font-size: min(2.5vh, 2vw) !important;
+    color:white;    
+}
+
+.ellipsisCutoff{
+    overflow:hidden !important;
+    white-space: nowrap !important;
+    text-overflow: ellipsis !important;
+    text-align: left;
+}
+
+.topRow{
+    width:63%;
+    height:100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
