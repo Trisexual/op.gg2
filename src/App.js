@@ -14,6 +14,8 @@ import findSumm from "./dragon/findSummSpell";
 import findChamp from "./dragon/findChampion";
 import findQueue from "./dragon/findQueueType";
 
+import TopBar from "./topBar.js"
+
 
 
 //big note on how i made my shit
@@ -648,9 +650,9 @@ export class App extends React.Component {
     }
     else if (true){
       return (
+        <div>
+          <TopBar />
         <div className = "everythingContainer">
-          
-
           <div className="summonerInfoContainer">
 
           <Container>
@@ -722,6 +724,7 @@ export class App extends React.Component {
           
           {gameRenders}
 
+        </div>
         </div>
       );
     }

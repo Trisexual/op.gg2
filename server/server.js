@@ -46,7 +46,7 @@ app.post('/joker/baby', (req, res) => {
     })
     .catch((err) =>{
       console.log("error");
-      res.status(500).send("suck cock");
+      res.status(err.response.status).send("suck cock");
     })
       
 });

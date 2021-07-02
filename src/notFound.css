@@ -1,0 +1,23 @@
+.cantFindText{
+    padding-top:5vh;
+    width:100vw;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.actualText{
+    padding:1vh;
+}
+
+.actualText > h1{
+    font-size: min(6vw, 5vh) !important;
+    font-weight: 500 !important;
+}
+
+.actualText > h2{
+    font-size: min(4vw, 3vh) !important;
+    color: #D53137 !important;
+    margin-top: 1vh !important;
+}

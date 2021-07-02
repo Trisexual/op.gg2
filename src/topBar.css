@@ -1,0 +1,56 @@
+.topBar{
+    height:10vh;
+    width: 100vw;
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid rgba(51, 51, 51, 0.418);
+
+}
+
+.searchContainer{
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    height: 100%;
+    width:60%;
+}
+
+.searchBart{
+    width: 30vw;
+    height:6vh;
+    font-size:2vh;
+}
+
+.submitButtont{
+    width: min(10vh, 10vw);
+    height:6vh;
+
+    background-color: #2597A9;
+    border:none;
+}
+
+.submitButtont > h1{
+    color:white !important;
+    font-size: min(2.5vw, 2vh) !important;
+    border:0vw !important;
+}
+
+.logo{
+    width:30%;
+    margin-left:5%;
+    display: flex;
+    align-items: center;
+}
+
+.goHome{
+    background: none;
+    border:none
+}
+
+.goHome > h1{
+    font-size: min(9vw, 6vh) !important;
+    font-weight: 700 !important;
+    color:#2379e9;
+    margin-top:-6px !important;
+    padding: 0 !important;
+}
