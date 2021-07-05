@@ -14,7 +14,7 @@ import findSumm from "./dragon/findSummSpell";
 import findChamp from "./dragon/findChampion";
 import findQueue from "./dragon/findQueueType";
 
-import TopBar from "./topBar.js"
+import TopBar from "./topBar.js";
 
 
 

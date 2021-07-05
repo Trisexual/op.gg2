@@ -10,10 +10,6 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import {BrowserRouter as Router, Route, Switch} from "react-router-dom";
 
 
-//hopefully this is the first file that peoiple open up
-//if you couldnt tell already, this app needs firebase to run.
-//running this localhost can be done using firbase, but if youre gay you can use the server files and change all of
-//the axios requests to localhost:3000
 ReactDOM.render(
   <React.StrictMode>
     <Router>
