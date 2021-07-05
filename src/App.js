@@ -90,7 +90,7 @@ export class App extends React.Component {
     let personToSearch = this.props.match.params.username
     
     //sets puuid for later use, as well as other states to be able to render player data
-    await axios.post("http://localhost:3000/joker/baby", {"url": "https://na1.api.riotgames.com/lol/summoner/v4/summoners/by-name/" + personToSearch})
+    await axios.post(secrets['request-link'], {"url": "https://na1.api.riotgames.com/lol/summoner/v4/summoners/by-name/" + personToSearch})
     .then(res => {
         
         
@@ -112,7 +112,7 @@ export class App extends React.Component {
       window.location.assign("/notFound");
     })
 
-    await axios.post("http://localhost:3000/joker/baby", {"url": "https://na1.api.riotgames.com/lol/league/v4/entries/by-summoner/" +  this.state.encryptedId})
+    await axios.post(secrets['request-link'], {"url": "https://na1.api.riotgames.com/lol/league/v4/entries/by-summoner/" +  this.state.encryptedId})
       .then(res => {
 
         let rankedSolo = {rank : "unranked", lp : 0, tier : "unranked"};
@@ -147,12 +147,12 @@ export class App extends React.Component {
 
     //currently gets 10 games, can change later
     //get games, then run through a game and set some states based on the info in the game
-    await axios.post("http://localhost:3000/joker/baby", {"url": "https://americas.api.riotgames.com/lol/match/v5/matches/by-puuid/" + this.state.puuid + "/ids?start=0&count=10"})
+    await axios.post(secrets['request-link'], {"url": "https://americas.api.riotgames.com/lol/match/v5/matches/by-puuid/" + this.state.puuid + "/ids?start=0&count=10"})
       .then(summ => {
         this.setState({matchesFound:summ.data.length});
         console.log(summ);
         for(let i = 0; i < (this.state.matchesFound); i++){
-          axios.post("http://localhost:3000/joker/baby", {"url": "https://americas.api.riotgames.com/lol/match/v5/matches/" + summ.data[i]})
+          axios.post(secrets['request-link'], {"url": "https://americas.api.riotgames.com/lol/match/v5/matches/" + summ.data[i]})
             .then(res => {
 
               console.log(res.data);
@@ -553,7 +553,7 @@ export class App extends React.Component {
         }
       })
 
-    await axios.post("http://localhost:3000/joker/baby", {"url": "https://na1.api.riotgames.com/lol/champion-mastery/v4/champion-masteries/by-summoner/" +  this.state.encryptedId})
+    await axios.post(secrets['request-link'], {"url": "https://na1.api.riotgames.com/lol/champion-mastery/v4/champion-masteries/by-summoner/" +  this.state.encryptedId})
       .then(res => {
         
         let fakeMasteryData = [];

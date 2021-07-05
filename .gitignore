@@ -24,3 +24,5 @@ yarn-error.log*
 
 functions/.env
 server/.env
+
+/server/node_modules
