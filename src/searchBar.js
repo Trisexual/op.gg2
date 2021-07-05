@@ -1,6 +1,7 @@
 import React from 'react';
 import "./searchBar.css";
 import axios from 'axios';
+import secrets from "./secretStuff.json";
 
 export class SearchBar extends React.Component {
 
@@ -15,7 +16,7 @@ export class SearchBar extends React.Component {
     async submit(e){
         e.preventDefault();
 
-        await axios.post("http://localhost:3000/joker/baby", {"url": "https://na1.api.riotgames.com/lol/summoner/v4/summoners/by-name/" + this.state.username})
+        await axios.post(secrets["request-link"], {"url": "https://na1.api.riotgames.com/lol/summoner/v4/summoners/by-name/" + this.state.username})
         .then(res => {
             window.location.assign("/user/" + this.state.username);
         })
