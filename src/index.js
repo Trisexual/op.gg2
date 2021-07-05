@@ -3,18 +3,27 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import {App} from './App';
 import {SearchBar} from "./searchBar.js";
-import {NotFound} from "./notFound.js"
+import {NotFound} from "./notFound.js";
+import {NoPage} from "./404.js"
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-import {BrowserRouter as Router, Route} from "react-router-dom";
+import {BrowserRouter as Router, Route, Switch} from "react-router-dom";
 
+
+//hopefully this is the first file that peoiple open up
+//if you couldnt tell already, this app needs firebase to run.
+//running this localhost can be done using firbase, but if youre gay you can use the server files and change all of
+//the axios requests to localhost:3000
 ReactDOM.render(
   <React.StrictMode>
     <Router>
       <div>
-        <Route exact path="/user/:username" component={App} />
-        <Route exact path="/gay/man" component={SearchBar} />
-        <Route exact path="/notFound" component={NotFound} />
+        <Switch>
+          <Route exact path="/user/:username" component={App} />
+          <Route exact path="/" component={SearchBar} />
+          <Route exact path="/notFound" component={NotFound} />
+          <Route exact path="*" component={NoPage} />
+        </Switch>
       </div>
     </Router>
   </React.StrictMode>,

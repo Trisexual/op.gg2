@@ -557,15 +557,29 @@ export class App extends React.Component {
     await axios.post("http://localhost:3000/joker/baby", {"url": "https://na1.api.riotgames.com/lol/champion-mastery/v4/champion-masteries/by-summoner/" +  this.state.encryptedId})
       .then(res => {
         
-        let fakeMasteryData = ["second highest", "highest", "third highest"];
+        let fakeMasteryData = [];
+        let defaultMastery = (
+          <div className = "championMasteryInfo" >
+            <Image src={`../images/profileicon/29.png`} alt = "champion" className = "masteryChampionImage" roundedCircle thumbnail/>
+            
+            <h1>None</h1>
+            <h2>0</h2>
+          </div>
+        );
 
-        for(let i = 0; i < 3; i++){
+        for(let i = 0; i < 3; i++) fakeMasteryData.push(defaultMastery)
+
+        let amount = Math.min(3, res.data.length)
+
+        for(let i = 0; i < amount; i++){
           let champInfo = {
             champId : "asd",
             champName : "no clue",
             masteryLevel : 1,
             masterPoints : 0
           };
+
+          console.log(res.data)
           
           champInfo.champId = findChamp(res.data[i].championId).id;
           champInfo.champName = findChamp(res.data[i].championId).name;
@@ -632,6 +646,7 @@ export class App extends React.Component {
 
     let favouriteChampion = {"champ" : "None", "count" : 0};
     let favouriteRole = {"role": "None", "count": 0};
+
     for(let i = 0; i < this.state.favChamp.length; i++){
       if(favouriteChampion.count < this.state.favChamp[i].count){
         favouriteChampion = {"champ" : this.state.favChamp[i].champ, "count":this.state.favChamp[i].count}
@@ -643,7 +658,7 @@ export class App extends React.Component {
       }
     }
 
-    favouriteChampion["champ"] = findChamp(favouriteChampion["champ"]).name;
+    if(favouriteChampion["champ"] != "None") favouriteChampion["champ"] = findChamp(favouriteChampion["champ"]).name;
 
     if(!(this.state.finishedRendering && this.state.matchDataDone >= 10) && false){
       return(<div></div>);
@@ -662,6 +677,7 @@ export class App extends React.Component {
               <div className = "leftSide">
 
                 <div className = "playerInfoStuff">
+                  
                   <img src={`../images/profileicon/${this.state.summonerProfile}.png`} className = "summonerInfoImage"/>
                   
                   <div style = {{marginLeft:"1vw", width : "max(20vw, 40vh)"}} className = "summonerInfoText">

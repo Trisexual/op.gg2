@@ -31,7 +31,7 @@ export default class TopBar extends React.Component {
     }
 
     goToHome(e){
-        window.location.assign("/gay/man")
+        window.location.assign("/")
     }
 
     render(){
