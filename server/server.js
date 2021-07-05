@@ -47,6 +47,11 @@ app.get('/jokes/random', (req, res) => {
     })
       
 });
+app.get('/', (req, res) => {
+
+  res.json(process.env.RIOT_KEY);
+      
+});
 
 
 app.post('/joker/baby', (req, res) => {
@@ -105,7 +110,6 @@ app.post('/joker/baby', (req, res) => {
       })
   }
 });
-
 
 
 const PORT = process.env.PORT || 3000;
