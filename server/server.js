@@ -1,3 +1,9 @@
+//currently how this works is just two websites where one of them is this server file right here
+//and one of them is the front end stuff
+//that how i did it on heroku. jank ass fix but it works i think
+
+
+
 const express = require('express');
 const axios = require('axios');
 require('dotenv').config()
@@ -47,12 +53,6 @@ app.get('/jokes/random', (req, res) => {
     })
       
 });
-app.get('/', (req, res) => {
-
-  res.json(process.env.RIOT_KEY);
-      
-});
-
 
 app.post('/joker/baby', (req, res) => {
 

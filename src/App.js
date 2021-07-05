@@ -16,6 +16,8 @@ import findQueue from "./dragon/findQueueType";
 
 import TopBar from "./topBar.js";
 
+import secrets from "./secretStuff.json"
+
 
 
 //big note on how i made my shit
@@ -699,14 +701,14 @@ export class App extends React.Component {
                     <h2 className = "rankedTitle">Ranked Solo</h2>
                     <h1>{this.state.rankedSoloInfo.tier[0].toUpperCase()}{this.state.rankedSoloInfo.tier.slice(1,10000000).toLowerCase()} {this.state.rankedSoloInfo.rank == "unranked" ? "" : this.state.rankedSoloInfo.rank}</h1>
                     <h1 className = "thinText">{this.state.rankedSoloInfo.lp} LP</h1>
-                    <Image src={`../images/ranked-emblems/${this.state.rankedSoloInfo.tier}.png`} alt="rankedEmblem" className = "rankedEmblems" />
+                    <Image src={`../images/ranked-emblems/${this.state.rankedSoloInfo.tier.toUpperCase()}.png`} alt="rankedEmblem" className = "rankedEmblems" />
                   </div>
 
                   <div className = "rankedInfo">
                     <h2 className = "rankedTitle">Ranked Flex</h2>
                     <h1>{this.state.rankedFlexInfo.tier[0].toUpperCase()}{this.state.rankedFlexInfo.tier.slice(1,10000000).toLowerCase()} {this.state.rankedFlexInfo.rank == "unranked" ? "" : this.state.rankedFlexInfo.rank}</h1>
                     <h1 className = "thinText">{this.state.rankedFlexInfo.lp} LP</h1>
-                    <img src={`../images/ranked-emblems/${this.state.rankedFlexInfo.tier}.png`} alt="rankedEmblem" className = "rankedEmblems" />
+                    <img src={`../images/ranked-emblems/${this.state.rankedFlexInfo.tier.toUpperCase()}.png`} alt="rankedEmblem" className = "rankedEmblems" />
                   </div> 
 
                 </div>
