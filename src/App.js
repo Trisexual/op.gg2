@@ -23,13 +23,10 @@ import TopBar from "./topBar.js";
 //this make it incredibly hard to read, but i did this since i would need like 80 different classes in order to fit all of the shit i want
 //you could porbably just try your best to ignore the style element shit and you would understand the code perfectly
 
-
-
 //this entire code is a big fuck you to everyone reading this, since only i can read it without requiring several doses of
 //aderall to keep themselves from losing focus from this shitshow
 //im gonna be honest the easiest way to navigate is to use ctrl f whehnever you want to see where i stored some css
 //as well as using inspect element on the webpage to find specific things (ctrl-shift-c)
-
 
 function CustomToggle({ children, eventKey, winLose }) {
   const decoratedOnClick = useAccordionToggle(eventKey
