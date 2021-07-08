@@ -1,70 +1,17 @@
-# Getting Started with Create React App
+This is a backend project that allows you to search up a user on league of legends information. this is similar to another site known as op.gg. if you haven't used it before, try it out.
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This website uses riot games and their api's to show informations about a player in a clean and friendly way. The low number of requests that are allowed to be made on a personal and development api key is quite low, so i decided to get around that using databases to stored already known information. By doing this, i wont need to request to riot games every single time if i have to.
 
-## Available Scripts
+Unfortunately, I am probably unable to get a permanent api key from riot games, so if you want to see the website for yourself, you are going to have to set it up. Instructions are below
 
-In the project directory, you can run:
+1. First, you are going to need to get an api key from riot games. Its probably best to get a development key if you are going to use this website temporarily, which is what ill walk you through. Make an account https://developer.riotgames.com/ there. That exact link will likely prompt you to login into a riot games account as well as to make your account a developer. do that. That same link also brings you to where you can get your development api key, so once you get an account, go back there and create a new riot key.
 
-### `npm start`
+2. You will also need to make a mongoDB account, and get a culsters uri. freecodecamp has a good tutorial for this. https://www.freecodecamp.org/news/get-started-with-mongodb-atlas/. keep your uri somewhere, we need it later.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+2. download dependencies for this project. You can do that by opening windows command prompt or some terminal, moving the command prompt to this exact folder, and running npm install. You need npm installed for this.
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+3. Go into the server folder and create a file named ".env". In that file add in RIOT_KEY="penis" replacing penis with whatever your development riot key is. create another line with MONGO_URI="penis", once again replacing penis with what your mongoDB uri is. 
 
-### `npm test`
+4. use your terminal or command prompt and navigate to the server folder. run node server.js. after that, in your browser type localhost:5000. If you get an error saying you cannot get /, its working right.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+5. Now it should be working right. run "npm start" at the root folder to run the development build. I've unfortunately never tested getting someone else to work this right, so youre almost definetly going to run into problems. You are also going to run into problems if you are from the future, since league will have new assets and stuff.

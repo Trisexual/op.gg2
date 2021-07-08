@@ -108,8 +108,7 @@ export class App extends React.Component {
           
       })
     .catch(err => {
-      console.log("suck my fat cock");
-      window.location.assign("/notFound");
+      console.log(secrets['request-link']);
     })
 
     await axios.post(secrets['request-link'], {"url": "https://na1.api.riotgames.com/lol/league/v4/entries/by-summoner/" +  this.state.encryptedId})
@@ -176,10 +175,16 @@ export class App extends React.Component {
               }
 
               if(highestDmg == 0) highestDmg = 1;
+              
 
               for(let i = 0; i < 10; i++){
 
                 let participants = res.data.info.participants
+
+                if(participants[i].summoner1Id > 100){
+                  console.log(participants[i].summoner1Id);
+                  console.log(participants[i].summoner2Id);
+                }
               
                 let shitToPutIn = (               
                 <div className = "playerInfo" >
@@ -190,7 +195,7 @@ export class App extends React.Component {
                   </div>
                   
                   <div className = "nameHolder">
-                    <h2 className = "biggerH2">{participants[i].summonerName}</h2>
+                    <h2 className = "biggerH2"><a href={`http://localhost:3001/user/${participants[i].summonerName}`}>{participants[i].summonerName}</a></h2>
                   </div>
 
                   <div style = {{height:"100%", width:"10%"}} className = "scoreContainer">

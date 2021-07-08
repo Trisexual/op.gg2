@@ -153,6 +153,11 @@
     display: flex;
 }
 
+a{
+    color:black !important;
+    text-decoration: none !important;
+}
+
 .thinText{
     font-weight: 100 !important;
 }
