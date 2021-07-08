@@ -1,3 +1,9 @@
+/* Im not sure what the standard procedure is for making css readable, but
+i made practically everything a className. So just ctrl f if youre finding something */
+
+
+
+
 
 .everythingContainer{
     margin-bottom: min(4vw, 4vh);
@@ -545,4 +551,17 @@ h2{
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+@keyframes spin {
+    from {transform:rotate(0deg);}
+    to {transform:rotate(360deg);}
+  }
+
+.loadingImage{
+    margin-top:15vh;
+    margin-left:40vw;
+    margin-right:40vw;
+    width:20vw;
+    height:20vw;
 }

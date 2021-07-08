@@ -54,6 +54,7 @@ export class App extends React.Component {
   constructor(props){
     super(props);
 
+    //Im a lazy coder so this might even be all of the variables in the state
     this.state = {
         matches : [[],[],[],[],[]],
         upperAccordion: [[],[],[],[],[]],
@@ -90,10 +91,9 @@ export class App extends React.Component {
     let personToSearch = this.props.match.params.username
     
     //sets puuid for later use, as well as other states to be able to render player data
+    //not nesting the axios.post because async stuff makes my head hurt
     await axios.post(secrets['request-link'], {"url": "https://na1.api.riotgames.com/lol/summoner/v4/summoners/by-name/" + personToSearch})
     .then(res => {
-        
-        
         this.setState({
           puuid : res.data.puuid,
           encryptedId : res.data.id,
@@ -104,19 +104,22 @@ export class App extends React.Component {
 
           masteryData : []
         });
-
           
       })
     .catch(err => {
       console.log(secrets['request-link']);
     })
 
+    
+    //get ranked info based on summoner id i just got from above post req
     await axios.post(secrets['request-link'], {"url": "https://na1.api.riotgames.com/lol/league/v4/entries/by-summoner/" +  this.state.encryptedId})
       .then(res => {
 
         let rankedSolo = {rank : "unranked", lp : 0, tier : "unranked"};
         let rankedFlex = {rank : "unranked", lp : 0, tier : "unranked"};
-
+        
+        //since they give me ranked data unsorted, i used a foreach loop
+        //store ranked flex data if ranked flex data, otherwise do ranked solo data
         res.data.forEach(rankData => {
           if(rankData.queueType == "RANKED_FLEX_SR"){
             rankedFlex = {
@@ -144,23 +147,28 @@ export class App extends React.Component {
     
 
 
-    //currently gets 10 games, can change later
+    //currently gets 10 games, and cant get anymore afterwards in the webiste
     //get games, then run through a game and set some states based on the info in the game
     await axios.post(secrets['request-link'], {"url": "https://americas.api.riotgames.com/lol/match/v5/matches/by-puuid/" + this.state.puuid + "/ids?start=0&count=10"})
       .then(summ => {
+
+        //im storing this, since later i need to know how many games to render
         this.setState({matchesFound:summ.data.length});
-        console.log(summ);
+
+        //find all of the matches we end up finiding, poterntially less than 10
+        //doing this since i get match-ids rather than match data itself
+        //as in using each of the ten match ids i get search up the match data from it
         for(let i = 0; i < (this.state.matchesFound); i++){
           axios.post(secrets['request-link'], {"url": "https://americas.api.riotgames.com/lol/match/v5/matches/" + summ.data[i]})
             .then(res => {
 
-              console.log(res.data);
               let team1 = [];
               let team2 = [];
 
               let team1Won = false;
               if(res.data.info.teams[0].win) team1Won = true;
               
+              //find what was the highest damage dealt in the game, store it
               let highestDmg = 0;
               let playersTeam = 1;
               let playerWon = false;
@@ -173,14 +181,16 @@ export class App extends React.Component {
                   playerWon = res.data.info.participants[i].win;
                 }
               }
-
               if(highestDmg == 0) highestDmg = 1;
               
-
+              
               for(let i = 0; i < 10; i++){
 
                 let participants = res.data.info.participants
-
+                
+                //to those reading in the future, this may no longer happen, but after searching up a summoner named
+                //"big boy pants" i found that i was given summoner ids that dont actually exist
+                //i was never able to figure out why
                 if(participants[i].summoner1Id > 100){
                   console.log(participants[i].summoner1Id);
                   console.log(participants[i].summoner2Id);
@@ -188,6 +198,7 @@ export class App extends React.Component {
               
                 let shitToPutIn = (               
                 <div className = "playerInfo" >
+
                   <Image src={`../images/champion/${participants[i].championName}.png`} alt = "champion" className = "championImage2" roundedCircle/>
                   <div className = "summonerSpellContainer" style = {{width:"5%", marginRight:"0"}}>
                     <Image src ={`../images/spell/${findSumm(participants[i].summoner1Id).image.full}`} className = "summonerSpellImage" />
@@ -208,6 +219,9 @@ export class App extends React.Component {
 
                   <Container style = {{height:"100%", width:"30%", alignItems:"center", display:"flex"}}>
                     <Row style = {{display:"flex", justifyContent:"flex-start"}} noGutter>
+                      {/*im storing each of these items in their own column. In the case that the screens width gets
+                      too small, so like on a phone, they split into two lines rather than just 1
+                      Terribly bad fix*/}
 
                       <Col md = {6} xs = {12} sm = {12} className = "itemContainer goRight">
                         {[...Array(4)].map((value, index) => {
@@ -217,6 +231,7 @@ export class App extends React.Component {
                           else return(<img src={`../images/item/${participants[i]["item" + index.toString()]}.png`} className = "normalItem"/>);
                         })}
                       </Col>
+
                       <Col md = {6} xs = {12} sm = {12} className = "itemContainer goLeft" >
                         {[...Array(3)].map((value, index) => {
                           let currentItem = participants[i]["item" + (index+4).toString()]
@@ -247,7 +262,8 @@ export class App extends React.Component {
 
                 </div>
               );
-
+                
+              //each of the teams have their own stylizations
                 if(i < 5){
                   team1.push(
                   <div style = {{height:"9vh"}}>
@@ -263,7 +279,8 @@ export class App extends React.Component {
                   )
                 }
               }
-              
+
+              //top roiw says stuff like "Victory" and "Red Team" and the nuber of objectives gotten on that team
               let topRow1 = (
                 <div className = "topRow">
                   <div className = "textImageHolder" style = {{width:"33%"}}>
@@ -303,7 +320,7 @@ export class App extends React.Component {
               )
 
 
-
+              
               let temp = (
                 <div>
                   <div className = {playerWon ? "winningTeam" : "losingTeam"}>
@@ -349,6 +366,7 @@ export class App extends React.Component {
                 </div>
               );
 
+              //like 80 percent of the stuff below is just to display the date a game was played
               let fakeMatches = this.state.matches;
               fakeMatches[i] = temp;
               this.setState({matches : fakeMatches});
@@ -380,8 +398,7 @@ export class App extends React.Component {
                 toDisplay = [(months == 1 ? " month" : " months"), months];
               }
 
-              if(days == 2){console.log(diff)}
-
+              //Im keeping track of the number of games that the player won
               for(let j = 0; j < 10; j++){
                 if(res.data.info.participants[j].summonerId === this.state.encryptedId){
                   playerInfo = res.data.info.participants[j]
@@ -409,26 +426,28 @@ export class App extends React.Component {
               let gameName = JSON.parse(JSON.stringify(findQueue(res.data.info.queueId)));
               gameName.description = gameName.description.replace("games", "");
               
-              let othersTrue = false
+
+              //Im given a key, i need to find name based on key. Im using a json object handed by league, problem
+              //with that is that when i get the name its wayyyy to verbose. I just shorten it like so
               if(gameName.description.indexOf("Ranked Flex") != -1){
                 gameName.description = "Ranked Flex";
-                othersTrue = true;
               } else if(gameName.description.indexOf("Ranked Solo") != -1){
                 gameName.description = "Ranked Solo";
-                othersTrue = true;
               } else if(gameName.description.indexOf("ARAM") != -1){
                 gameName.description = "ARAM";
-                othersTrue = true;
               } else if(gameName.description.indexOf("Draft") != -1){
                 gameName.description = "Draft Pick";
-                othersTrue = true;
               } else if(gameName.description.indexOf("Blind") != -1){
                 gameName.description = "Blind Pick";
-                othersTrue = true;
               } else{
+                //Theres no way leagues gonna add more permanent gamemode right???????????????
+                //They hate fun after all
                 gameName.description = "RGM";
               }
 
+
+              //This ontains all of the html for the unopened accordion. As in the info for a game before you open to see all 
+              //the participants of the game
               fakeUpper[i] = (
               <div className = {this.state.winLoseGame[i] ? "gameInfoUnopened gameUnopenedWinner" : "gameInfoUnopened gameUnopenedLoser"}>
                 
@@ -463,9 +482,6 @@ export class App extends React.Component {
                         <div style = {{width:"1vw"}} />
                       </div>
 
-
-
-                      
                       <Container fluid={true} style = {{height:"100%"}}>
                       <Row style = {{height:"100%"}} noGutter>
 
@@ -513,9 +529,14 @@ export class App extends React.Component {
                 </Row> 
                 </Container> 
               </div>
-              
               );
               
+                
+              //find favourite role as well as favourite champion for later use
+              //favourite as in most played within all games found
+              //I can only display one favourite champion as well as role
+              //Since this is running in an async function, if you have 2 or more champs that are your fav champ then
+              //it effectively randomly chooses one
               let fakeFavRole = this.state.favRole;
               let fakeFavChamp = this.state.favChamp;
 
@@ -530,7 +551,6 @@ export class App extends React.Component {
               else{
                 fakeFavChamp.push({"champ" : playerInfo.championId, "count" : 1});
               }
-
 
               if(playerInfo.individualPosition == "UTILITY") playerInfo.individualPosition = "SUPPORT";
               for(let i = 0; i < fakeFavRole.length; i++){
@@ -557,7 +577,9 @@ export class App extends React.Component {
           this.setState(prev => {return {matchDataDone: prev.matchDataDone + 1}});
         }
       })
+    
 
+    //find champion mastery
     await axios.post(secrets['request-link'], {"url": "https://na1.api.riotgames.com/lol/champion-mastery/v4/champion-masteries/by-summoner/" +  this.state.encryptedId})
       .then(res => {
         
@@ -570,9 +592,11 @@ export class App extends React.Component {
             <h2>0</h2>
           </div>
         );
+        
 
+        //there is a chance that the player has a league acc but has never played more than 2 champions ever
+        //this means i wont get any mastery info on anything other than the champs they played
         for(let i = 0; i < 3; i++) fakeMasteryData.push(defaultMastery)
-
         let amount = Math.min(3, res.data.length)
 
         for(let i = 0; i < amount; i++){
@@ -582,8 +606,6 @@ export class App extends React.Component {
             masteryLevel : 1,
             masterPoints : 0
           };
-
-          console.log(res.data)
           
           champInfo.champId = findChamp(res.data[i].championId).id;
           champInfo.champName = findChamp(res.data[i].championId).name;
@@ -618,6 +640,9 @@ export class App extends React.Component {
 
     let gameRenders = []
 
+
+    //look i need to use how many matches i found its what i said earlier like 500 lines ago
+    //this creates the actual games into accordions
     for(let i = 0; i < this.state.matchesFound; i++){
 
       gameRenders.push(
@@ -641,13 +666,16 @@ export class App extends React.Component {
     }
 
     if(this.state.matchesFound == 0){
+      //just in case
       gameRenders.push(
         <div style = {{marginTop:"5vh"}}>
-          <h2>There were no games played this season</h2>
+          <h2>There were no games found</h2>
         </div>
       )
     }
 
+
+    //use the favChamp and favRole data to find the actual favourite champ and favourite role
     let favouriteChampion = {"champ" : "None", "count" : 0};
     let favouriteRole = {"role": "None", "count": 0};
 
@@ -662,10 +690,21 @@ export class App extends React.Component {
       }
     }
 
+    //Make the name readable in case its "monkeyKing" or "missFortune" or other stuff that i cant think of
     if(favouriteChampion["champ"] != "None") favouriteChampion["champ"] = findChamp(favouriteChampion["champ"]).name;
 
-    if(!(this.state.finishedRendering && this.state.matchDataDone >= 10) && false){
-      return(<div></div>);
+
+    //tkaees time to request from riot, so this is a loading screen
+    //ive come to like the janky rendering of the entire page, it lets me know that stuff is actually happening, rather than
+    //a circly thing that gives me ptsd
+    //if you want too see my way, just add a false to the statemnent
+    if(!(this.state.finishedRendering && this.state.matchDataDone >= this.state.matchesFound)/* && false */){
+      return(
+      <div>
+        <TopBar />
+        <img src = {`../images/ui/loading.png`} className = "loadingImage" style = {{transform: "rotate(39deg)", animation: `spin ${0.6}s linear infinite`}}/>
+
+      </div>);
     }
     else if (true){
       return (
@@ -740,8 +779,8 @@ export class App extends React.Component {
 
           
 
-          
-          
+        
+          {/*HEY LOOK AT THIS BELOW ITS ACTUALLY IMPORTANT (kind of not really)*/}  
           {gameRenders}
 
         </div>
