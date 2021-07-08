@@ -154,6 +154,7 @@ export class App extends React.Component {
 
         //im storing this, since later i need to know how many games to render
         this.setState({matchesFound:summ.data.length});
+        
 
         //find all of the matches we end up finiding, poterntially less than 10
         //doing this since i get match-ids rather than match data itself
@@ -161,6 +162,8 @@ export class App extends React.Component {
         for(let i = 0; i < (this.state.matchesFound); i++){
           axios.post(secrets['request-link'], {"url": "https://americas.api.riotgames.com/lol/match/v5/matches/" + summ.data[i]})
             .then(res => {
+
+              
 
               let team1 = [];
               let team2 = [];
@@ -424,6 +427,9 @@ export class App extends React.Component {
 
               //only way i could figure out making a deep copy of an object
               let gameName = JSON.parse(JSON.stringify(findQueue(res.data.info.queueId)));
+              if(gameName.description == null){
+                gameName.description = "probably ultbook or something";
+              }
               gameName.description = gameName.description.replace("games", "");
               
 
