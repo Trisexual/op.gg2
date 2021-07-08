@@ -14,7 +14,7 @@ export default function(spellId){
     })
 
     if(tempSpellId.id == "failed"){
-        tempSpellId = {image : {full : "emptyItemSlot"}}
+        tempSpellId = {image : {full : "emptyItemSlot.png"}}
     }
 
     return tempSpellId;
