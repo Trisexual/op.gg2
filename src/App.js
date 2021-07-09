@@ -209,7 +209,7 @@ export class App extends React.Component {
                   </div>
                   
                   <div className = "nameHolder">
-                    <h2 className = "biggerH2"><a href={`http://localhost:3001/user/${participants[i].summonerName}`}>{participants[i].summonerName}</a></h2>
+                    <h2 className = "biggerH2"><a href={`/user/${participants[i].summonerName}`}>{participants[i].summonerName}</a></h2>
                   </div>
 
                   <div style = {{height:"100%", width:"10%"}} className = "scoreContainer">
