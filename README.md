@@ -1,3 +1,5 @@
+![op.gg image](https://cdn.discordapp.com/attachments/720093329852858419/894422095314944070/opgg.png)
+
 This is a backend project that allows you to search up a user on league of legends information. this is similar to another site known as op.gg. if you haven't used it before, try it out.
 
 This website uses riot games and their api's to show informations about a player in a clean and friendly way. The low number of requests that are allowed to be made on a personal and development api key is quite low, so i decided to get around that using databases to stored already known information. By doing this, i wont need to request to riot games every single time if i have to.
