@@ -163,7 +163,7 @@ export class App extends React.Component {
           axios.post(secrets['request-link'], {"url": "https://americas.api.riotgames.com/lol/match/v5/matches/" + summ.data[i]})
             .then(res => {
 
-              
+              console.log(res.data);
 
               let team1 = [];
               let team2 = [];
@@ -471,7 +471,7 @@ export class App extends React.Component {
                     </div>
 
                     <div className = "gameStuffInfo" style = {{width:"25%"}}>
-                      <h2>{Math.floor(res.data.info.gameDuration / 1000 / 60).toString() + "m " + (Math.floor(res.data.info.gameDuration / 1000) % 60).toString() + "s"}</h2>
+                      <h2>{Math.floor(res.data.info.gameDuration / 60).toString() + "m " + (Math.floor(res.data.info.gameDuration) % 60).toString() + "s"}</h2>
                       <h2>{toDisplay[1].toString() + toDisplay[0] + " ago"}</h2>
                     </div>
                   </div>
@@ -729,7 +729,7 @@ export class App extends React.Component {
                   
                   <img src={`../images/profileicon/${this.state.summonerProfile}.png`} className = "summonerInfoImage"/>
                   
-                  <div style = {{marginLeft:"1vw", width : "max(20vw, 40vh)"}} className = "summonerInfoText">
+                  <div style = {{marginLeft:"1vw", width : "max(25vw, 37vh)"}} className = "summonerInfoText">
                     <h1 className = "specialText">{this.state.summonerName}</h1>
                     <h1 className = "thinText">Level {this.state.summonerLevel}</h1>
                   </div>

@@ -5,7 +5,6 @@ import {App} from './App';
 import {SearchBar} from "./searchBar.js";
 import {NotFound} from "./notFound.js";
 import {NoPage} from "./404.js"
-import 'bootstrap/dist/css/bootstrap.min.css';
 
 import {BrowserRouter as Router, Route, Switch} from "react-router-dom";
 

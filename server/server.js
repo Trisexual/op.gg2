@@ -14,7 +14,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 const mongoose = require("mongoose");
-mongoose.connect(process.env.MONGO_URI, {
+mongoose.connect("mongodb+srv://fuckerman123:asd123qwe@cluster0.nhcbe.mongodb.net/myFirstDatabase?retryWrites=true&w=majority", {
   useNewUrlParser: true,
   useUnifiedTopology: true
 });
