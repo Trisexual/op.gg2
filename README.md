@@ -12,7 +12,7 @@ Unfortunately, I am probably unable to get a permanent api key from riot games, 
 
 2. download dependencies for this project. You can do that by opening windows command prompt or some terminal, moving the command prompt to this exact folder, and running npm install. You need npm installed for this.
 
-3. Go into the server folder and create a file named ".env". In that file add in RIOT_KEY="penis" replacing penis with whatever your development riot key is. create another line with MONGO_URI="penis", once again replacing penis with what your mongoDB uri is. 
+3. Go into the server folder and create a file named ".env". In that file add in RIOT_KEY="keyname" replacing keyname with whatever your development riot key is. create another line with MONGO_URI="keyname", once again replacing keyname with what your mongoDB uri is. 
 
 4. use your terminal or command prompt and navigate to the server folder. run node server.js. after that, in your browser type localhost:5000. If you get an error saying you cannot get /, its working right.
 
